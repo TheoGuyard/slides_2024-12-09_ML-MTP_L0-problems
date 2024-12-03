@@ -28,6 +28,20 @@
 % Algos
 \usepackage[ruled]{algorithm2e}
 
+% Code
+\usepackage{listings}
+\lstset{
+  language=Python,
+  basicstyle=\ttfamily\scriptsize,
+  keywordstyle=\color{TolLightOrange},
+  commentstyle=\color{gray},
+  stringstyle=\color{red},
+  breaklines=true,
+  showstringspaces=false,
+  keywordstyle=[2]\color{TolDarkBlue},
+  keywords=[2]{Leastsquares, L2norm, BnbSolver, make_regression, solve, Problem, Minimize, Variable},
+}
+
 % Pgfplot
 \pgfplotsset{
     legend image code/.code={
