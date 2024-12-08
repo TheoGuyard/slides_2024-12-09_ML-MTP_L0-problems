@@ -59,7 +59,7 @@
     \begin{tikzpicture}[remember picture,overlay]
         \begin{scope}[xshift=0.5\textwidth]
             \onslide<1-> {
-                \node[align=center,text width=0.5\textwidth] (problem) at (-2.75,3.25) {
+                \node[align=center,text width=0.45\textwidth] (problem) at (-2.75,3.25) {
                     \begin{blockcolor}{mDarkTeal}{Problem}
                     \centering
                     $\min_{\pv \in \kR^{\pdim}} \lfunc(\pv) + \reg\norm{\pv}{0} + \pfunc(\pv)$
@@ -72,24 +72,45 @@
             %
             %
             \onslide<2-> {
-                \node[align=center,text width=0.5\textwidth] (mip) at ($(problem)+(0,-2.9)$) {
-                    \begin{blockcolor}{mDarkTeal}{Lifted formulation}
+                \node (mip) at ($(problem)+(0,-2.9)$) {};
+                \node[text width=0.525\linewidth,align=center,font=\small] at ($(mip)+(5.75,-0.15)$) {\textbf{Linearize $\boldsymbol{\ell}_{\0}$-norm} \\ $\norm{\pv}{0}$ $=$ $\transp{\1}\bv$ when \\ $\pvi{\idxentry} = 0$ $\iff$ $\bvi{\idxentry} = 0, \  \forall \idxentry$ \\ $\pvi{\idxentry} \neq 0$ $\iff$ $\bvi{\idxentry} = 1, \  \forall \idxentry$ \\ with $\pv \in \kR^{\pdim}$ and $\bv \in \{0,1\}^{\pdim}$};
+            }
+            %
+            %
+            %
+            \onslide<3-> {
+                \node[align=center,text width=0.45\textwidth] (mip) at ($(problem)+(0,-2.9)$) {
+                    \begin{blockcolor}{mDarkTeal}{Linearized formulation}
                     \centering
                     $\left\{\begin{array}{rcl}\min && \lfunc(\pv) + \reg\textcolor{TolLightOrange}{\transp{\1}\bv} + \pfunc(\pv) \\
-                    \text{s.t.} && \textcolor{TolLightOrange}{\pvi{\idxentry} = 0 \implies \bvi{\idxentry} = 0, \ \forall \idxentry} \\
+                    \text{s.t.} && \textcolor{TolLightOrange}{\pvi{\idxentry} = 0 \iff \bvi{\idxentry} = 0, \ \forall \idxentry} \\
                     && \pv \in \kR^{\pdim}, \ \textcolor{TolLightOrange}{\bv \in \{0,1\}^{\pdim}}\end{array}\right.$
                     \end{blockcolor}
                 };
-                %
-                \node[text width=0.525\linewidth,align=center,font=\small] at ($(mip)+(5.75,-0.15)$) {\textbf{Lifted $\boldsymbol{\ell}_{\0}$-norm formulation} \\ $\norm{\pv}{0}$ $=$ $\transp{\1}\bv$ with $\pv \in \kR^{\pdim}$ and $\bv \in \{0,1\}^{\pdim}$ \\ if $\pvi{\idxentry} = 0$ $\iff$ $\bvi{\idxentry} = 0$ for all $\idxentry \in \intervint{1}{\pdim}$};
                 %
                 \draw[ultra thick,->] (problem) -- ($(mip.north)+(0,-0.25)$) node[midway,font=\small,fill=TolLightWhite,draw,ultra thick,yshift=1.5pt] {linearize $\ell_0$-norm};
             }
             %
             %
             %
-            \onslide<3-> {
-                \node[align=center,text width=0.5\textwidth] (practical-mip) at ($(mip)+(0,-3.25)$) {
+            \onslide<4-> {
+                \node[align=center,text width=0.45\textwidth] (practical-mip) at ($(mip)+(0,-3.25)$) {};
+                %
+                \node[text width=0.65\linewidth,align=center,font=\small] at ($(practical-mip)+(5.75,-0.15)$) {
+                    \textbf{Avoid logical constraint } \\[0.5em]
+                    $\pfunc_{\text{mip}}(\pv,\bv) = 
+                    \begin{cases}
+                        \pfunc(\pv) &\text{if } \pvi{\idxentry} = 0 \iff \bvi{\idxentry} = 0 \\
+                        +\infty &\text{otherwise}
+                    \end{cases}
+                    $
+                };
+            }
+            %
+            %
+            %
+            \onslide<5-> {
+                \node[align=center,text width=0.45\textwidth] (practical-mip) at ($(mip)+(0,-3.25)$) {
                     \begin{blockcolor}{mDarkTeal}{MIP formulation}
                     \centering
                     $\left\{\begin{array}{rcl}\min && \lfunc(\pv) + \reg\transp{\1}\bv + \textcolor{TolLightOrange}{\pfunc_{\text{mip}}(\pv,\bv)} \\
@@ -98,20 +119,6 @@
                 };
                 %
                 \draw[ultra thick,->] (mip) -- ($(practical-mip.north)+(0,-0.25)$) node[midway,font=\small,fill=TolLightWhite,draw,ultra thick,yshift=1.5pt] {avoid logical cstr.};
-                %
-                \node[text width=0.525\linewidth,align=center,font=\small] at ($(practical-mip)+(5.75,-0.15)$) {
-                    \textbf{Logical constraint standardization} \\[0.5em]
-                    {
-                        \scriptsize
-                        $\begin{array}{ll}
-                        \toprule
-                        \pfunc(\pv) & \pfunc_{\text{mip}}(\pv,\bv) \\ \midrule
-                        \icvx(\norm{\pv}{\infty} \leq \bigM) \quad~ & \icvx(-\bigM \bv \leq \pv \leq \bigM \bv) \\
-                        \regtwo\norm{\pv}{2}^2 & \sum_{\idxentry=1}^{\pdim} \regtwo\tfrac{\pvi{\idxentry}^2}{\bvi{\idxentry}} \\ 
-                        \bottomrule
-                        \end{array}$
-                    }
-                };
             }
         \end{scope}
     \end{tikzpicture}
@@ -120,29 +127,9 @@
 \begin{frame}[fragile]{MIP -- Hands-on with \texttt{cvxpy}}
     \begin{tikzpicture}[remember picture,overlay]
         \begin{scope}[xshift=0.5\linewidth]
-            \node[text width=0.4\linewidth,align=center] (reg) at (-3.5,2.75) {\textbf{Sparse regression} \\ Find $\pv$ sparse such that $\obs \simeq \dic\pv$};
-            %
-            \node[text width=0.6\linewidth,align=center] (opt) at ($(reg)+(0,-2)$) {\textbf{Optimization problem} \\ $\min_{\pv \in \kR^{\pdim}} \lfunc(\pv) + \reg\norm{\pv}{0} + \pfunc(\pv)$};
-            %
-            \node[text width=0.45\linewidth,align=center] at ($(opt)+(0,-1)$) {
-                \begin{itemize}[label=\textbullet,nosep]
-                \item $\lfunc(\pv) = \tfrac{1}{2}\norm{\obs - \dic\pv}{2}^2$
-                \item $\pfunc(\pv) = \icvx(-\bigM \leq \pv \leq \bigM)$
-                \end{itemize}
-            };
-            %
-            \draw[ultra thick,->] (reg) -- (opt);
-            %
-            \node[text width=0.6\linewidth,align=center] (mip) at ($(opt)+(0,-3.5)$) {\textbf{MIP formulation} \\[0.5em] $\left\{\begin{array}{ll}\min &\lfunc(\pv) + \reg\transp{\1}\bv \\ \text{s.t.} & -\bigM\bv \leq \pv \leq \bigM\bv \\ & \pv \in \kR^{\pdim}, \bv \in \{0,1\}^{\pdim} \end{array}\right.$};
-            %
-            \draw[ultra thick,->] ($(opt)+(0,-1.75)$) -- (mip);
-            %
-            \node[fill=mDarkTeal] at (2.5,3.5) {\textcolor{TolLightWhite}{\texttt{\$ pip install cvxpy}}};
-            %
-            \node[text width=0.9\linewidth,align=center] at (2.5,-0.5) {
+            \node[text width=\linewidth,align=center] at (2.5,-0.25) {
                 \begin{lstlisting}
                 import cvxpy as cp
-                from sklearn.datasets import make_regression
                 
                 # Generate sparse regression data
                 A, y = make_regression()
@@ -153,16 +140,83 @@
                 z = cp.Variable(n, boolean=True)
 
                 # Define objective and constraints
-                objective = cp.Minimize(
-                    cp.sum_squares(A @ x - y) + 10 * cp.sum(z)
+                obj = cp.Minimize(
+                    cp.sum_squares(A @ x - y) + 
+                    0.01 * cp.sum(z)
                 )
-                constraints = [-M * z <= x, x <= M * z]
+                cst = [-5.0 * z <= x, x <= 5.0 * z]
 
                 # Solve the problem using Gurobi
-                problem = cp.Problem(objective, constraints)
+                problem = cp.Problem(obj, cst)
                 problem.solve(solver=cp.GUROBI)
                 \end{lstlisting}
             };
+            %
+            %
+            %
+            \onslide<1-> {
+                \node[text width=0.4\linewidth,align=center] (reg) at (-3.5,2.75) {\textbf{Sparse regression} \\ Find $\pv$ sparse such that $\obs \simeq \dic\pv$};
+            }
+            %
+            %
+            %
+            \onslide<2-> {
+                \node[text width=0.6\linewidth,align=center] (opt) at ($(reg)+(0,-2)$) {\textbf{Optimization problem} \\ $\min_{\pv \in \kR^{\pdim}} \lfunc(\pv) + \reg\norm{\pv}{0} + \pfunc(\pv)$};
+                %
+                \node[text width=0.45\linewidth,align=center] at ($(opt)+(0,-1)$) {
+                    \begin{itemize}[label=\textbullet,nosep]
+                    \item $\lfunc(\pv) = \tfrac{1}{2}\norm{\obs - \dic\pv}{2}^2$
+                    \item $\pfunc(\pv) = \icvx(-\bigM \leq \pv \leq \bigM)$
+                    \end{itemize}
+                };
+                %
+                \draw[ultra thick,->] (reg) -- (opt);
+            }
+            %
+            %
+            %
+            \onslide<3-> {
+                \node[text width=0.75\linewidth,align=center] (mip) at ($(opt)+(0,-3.5)$) {\textbf{MIP formulation} \\[0.5em] $\left\{\begin{array}{ll}\min &\tfrac{1}{2}\norm{\obs - \dic\pv}{2}^2 + \reg\textcolor{TolLightOrange}{\transp{\1}\bv} \\ \text{s.t.} & -\bigM\textcolor{TolLightOrange}{\bv} \leq \pv \leq \bigM \textcolor{TolLightOrange}{\bv} \\
+                & \pv \in \kR^{\pdim}, \ \textcolor{TolLightOrange}{\bv \in \{0,1\}^{\pdim}} \end{array}\right.$};
+                %
+                \draw[ultra thick,->] ($(opt)+(0,-1.75)$) -- (mip);
+            }
+            %
+            %
+            %
+            \onslide<4-> {
+                \node[fill=mDarkTeal] at (2.5,3.5) {\textcolor{TolLightWhite}{\texttt{\$ pip install cvxpy}}};
+            }
+            %
+            %
+            %
+            \onslide<1-4> {
+                \fill[TolLightWhite] (-1,3) rectangle (6,1);
+            }
+            %
+            %
+            %
+            \onslide<1-5> {
+                \fill[TolLightWhite] (-1,1.45) rectangle (6,-0.65);
+            }
+            %
+            %
+            %
+            \onslide<1-6> {
+                \fill[TolLightWhite] (-1,-0.25) rectangle (6,-2.9);
+            }
+            %
+            %
+            %
+            \onslide<1-7> {
+                \fill[TolLightWhite] (-1,-2.5) rectangle (6,-4);
+            }
+            %
+            %
+            %
+            \onslide<8-> {
+                \node at (0,0) {};
+            }
         \end{scope}
     \end{tikzpicture}
 \end{frame}
@@ -170,44 +224,54 @@
 \begin{frame}{MIP -- Let's sum up}
     \begin{tikzpicture}[remember picture,overlay]
         \begin{scope}[xshift=0.5\textwidth]
-            \node[align=center,text width=0.425\textwidth] (problem) at (0,3) {
-                \begin{blockcolor}{mDarkTeal}{Problem}
+            \onslide<1-> {
+                \node[align=center,text width=0.425\textwidth] (problem) at (0,3) {
+                    \begin{blockcolor}{mDarkTeal}{Problem}
+                        \centering
+                        $\min_{\pv \in \kR^{\pdim}} \lfunc(\pv) + \reg\norm{\pv}{0} + \pfunc(\pv)$
+                    \end{blockcolor}
+                };
+                %
+                \node[text width=0.425\linewidth,align=center] at ($(problem)+(0,-2.25)$) {
                     \centering
-                    $\min_{\pv \in \kR^{\pdim}} \lfunc(\pv) + \reg\norm{\pv}{0} + \pfunc(\pv)$
-                \end{blockcolor}
-            };
+                    \textbf{Pipeline} \\
+                    \begin{enumerate}[label=\textbf{\arabic*)}]
+                    \item Introduce binary variable
+                    \item Establish MIP formulation
+                    \item Use generic MIP solvers
+                    \end{enumerate}
+                };
+            }
             %
-            \node[text width=0.425\linewidth,align=center] at ($(problem)+(0,-2.25)$) {
-                \centering
-                \textbf{Pipeline} \\
-                \begin{enumerate}[label=\textbf{\arabic*)}]
-                \item Introduce binary variable
-                \item Establish MIP formulation
-                \item Use generic MIP solvers
-                \end{enumerate}
-            };
             %
-            \node[align=center,text width=0.475\textwidth] (problem) at (-3,-2.25) {
-                \begin{blockcolor}{TolLightGreen}{Pros}
-                \centering
-                \begin{itemize}[label=\ding{51}]
-                    \item Rich MIP literature
-                    \item Black-box solvers
-                    \item Convenient for practitioners
-                \end{itemize}
-                \end{blockcolor}
-            };
             %
-            \node[align=center,text width=0.475\textwidth] (problem) at (3,-2.25) {
-                \begin{blockcolor}{TolLightRed}{Cons}
-                \centering
-                \begin{itemize}[label=\ding{55}]
-                    \item Mostly commercial solvers
-                    \item Unable to exploit structure
-                    \item Performance issues
-                \end{itemize}
-                \end{blockcolor}
-            };
+            \onslide<2-> {
+                \node[align=center,text width=0.475\textwidth] (problem) at (-3,-2.25) {
+                    \begin{blockcolor}{TolLightGreen}{Pros}
+                    \centering
+                    \begin{itemize}[label=\ding{51}]
+                        \item Rich MIP literature
+                        \item Black-box solvers
+                        \item Convenient for practitioners
+                    \end{itemize}
+                    \end{blockcolor}
+                };
+            }
+            %
+            %
+            %
+            \onslide<3-> {
+                \node[align=center,text width=0.475\textwidth] (problem) at (3,-2.25) {
+                    \begin{blockcolor}{TolLightRed}{Cons}
+                    \centering
+                    \begin{itemize}[label=\ding{55}]
+                        \item Mostly commercial solvers
+                        \item Unable to exploit structure
+                        \item Performance issues
+                    \end{itemize}
+                    \end{blockcolor}
+                };
+            }
         \end{scope}
     \end{tikzpicture}
 \end{frame}
